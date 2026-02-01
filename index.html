@@ -34,7 +34,7 @@
 
         if (publicId) {
             // q_auto: 화질 자동, f_auto: 포맷 자동, w_1280: 가로 1280px로 제한 (로딩 속도 대폭 향상)
-            const videoUrl = `https://res.cloudinary.com/${cloudName}/video/upload/f_auto,q_auto,w_1280/v1/${publicId}.mp4`;
+            const videoUrl = `https://res.cloudinary.com/${cloudName}/video/upload/f_auto,q_auto,w_800/v1/${publicId}.mp4`;
             document.getElementById('videoPlayer').src = videoUrl;
         }
     </script>
