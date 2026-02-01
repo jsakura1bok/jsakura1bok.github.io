@@ -11,7 +11,7 @@
         }
         .video-container { 
             width: 100%; aspect-ratio: 16 / 9; 
-            position: relative; cursor: zoom-in; /* 돋보기 커서 적용 */
+            position: relative; cursor: zoom-in;
         }
         video { width: 100%; height: 100%; object-fit: contain; }
     </style>
@@ -27,15 +27,20 @@
         const cloudName = "dzrmwmjft";
 
         if (publicId) {
-            // 주소에 e_mute를 추가하여 원본 소스 자체가 무음이 되도록 설정
-            const videoUrl = `https://res.cloudinary.com/${cloudName}/video/upload/e_mute,f_auto,q_auto,w_1280/v1/${publicId}.mp4`;
-            
             const player = document.getElementById('videoPlayer');
-            player.src = videoUrl;
 
-            // 클릭 시 새 창에서 해당 영상을 크게 띄워줍니다.
+            // 1. 임베드용 주소: w_800 적용 (노션 페이지 로딩 속도 향상)
+            const embedUrl = `https://res.cloudinary.com/${cloudName}/video/upload/e_mute,f_auto,q_auto,w_800/v1/${publicId}.mp4`;
+            
+            // 2. 확대용 원본 주소: w_ 옵션 제거 (원본 해상도 그대로 송출)
+            const originalUrl = `https://res.cloudinary.com/${cloudName}/video/upload/e_mute,f_auto,q_auto/v1/${publicId}.mp4`;
+
+            // 임베드 플레이어에 최적화된 주소 할당
+            player.src = embedUrl;
+
+            // 클릭 시 원본 주소를 새 창에서 열기
             document.getElementById('container').onclick = () => {
-                window.open(videoUrl, '_blank');
+                window.open(originalUrl, '_blank');
             };
         }
     </script>
