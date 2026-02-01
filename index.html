@@ -29,13 +29,12 @@
         if (publicId) {
             const player = document.getElementById('videoPlayer');
 
-            // [핵심 수정] e_mute 대신 ac_none 사용 (오디오 코덱 제거)
+            // 1. 임베드용: fl_progressive 추가 (안정성 강화)
+            const embedUrl = `https://res.cloudinary.com/${cloudName}/video/upload/ac_none,f_auto,q_auto,w_800,fl_progressive/v1/${publicId}.mp4`;
             
-            // 1. 임베드용: 오디오제거 + 포맷자동 + 화질자동 + 가로800
-            const embedUrl = `https://res.cloudinary.com/${cloudName}/video/upload/ac_none,f_auto,q_auto,w_800/v1/${publicId}.mp4`;
-            
-            // 2. 새 창 원본용: 오디오제거 + 포맷자동 + 화질자동 (크기제한 없음)
-            const originalUrl = `https://res.cloudinary.com/${cloudName}/video/upload/ac_none,f_auto,q_auto/v1/${publicId}.mp4`;
+            // 2. 새 창 원본용: [핵심 수정] fl_progressive 추가
+            // 이 옵션이 있어야 브라우저가 영상 길이를 즉시 인식하고 스크롤 이동을 허용합니다.
+            const originalUrl = `https://res.cloudinary.com/${cloudName}/video/upload/ac_none,f_auto,q_auto,fl_progressive/v1/${publicId}.mp4`;
 
             player.src = embedUrl;
 
@@ -43,7 +42,6 @@
                 window.open(originalUrl, '_blank');
             };
             
-            // 에러 로깅
             player.onerror = () => {
                 console.log("Error loading video:", player.error);
             };
