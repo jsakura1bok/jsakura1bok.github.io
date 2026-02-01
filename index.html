@@ -29,21 +29,23 @@
         if (publicId) {
             const player = document.getElementById('videoPlayer');
 
-            // 1. 임베드용: 가볍게 800폭
-            const embedUrl = `https://res.cloudinary.com/${cloudName}/video/upload/e_mute/f_auto,q_auto,w_800/v1/${publicId}.mp4`;
+            // [핵심 수정] e_mute 대신 ac_none 사용 (오디오 코덱 제거)
             
-            // 2. 새 창 원본용: 리사이징 제거
-            const originalUrl = `https://res.cloudinary.com/${cloudName}/video/upload/e_mute/f_auto,q_auto/v1/${publicId}.mp4`;
+            // 1. 임베드용: 오디오제거 + 포맷자동 + 화질자동 + 가로800
+            const embedUrl = `https://res.cloudinary.com/${cloudName}/video/upload/ac_none,f_auto,q_auto,w_800/v1/${publicId}.mp4`;
+            
+            // 2. 새 창 원본용: 오디오제거 + 포맷자동 + 화질자동 (크기제한 없음)
+            const originalUrl = `https://res.cloudinary.com/${cloudName}/video/upload/ac_none,f_auto,q_auto/v1/${publicId}.mp4`;
 
             player.src = embedUrl;
 
             document.getElementById('container').onclick = () => {
                 window.open(originalUrl, '_blank');
             };
-
-            // 비디오 로드 에러 핸들링 (디버깅용)
+            
+            // 에러 로깅
             player.onerror = () => {
-                console.error("비디오 로드 실패: 주소를 확인하세요.");
+                console.log("Error loading video:", player.error);
             };
         }
     </script>
