@@ -23,19 +23,24 @@
     </style>
 </head>
 <body>
-    <div class="video-container">
-        <video id="videoPlayer" autoplay muted loop playsinline></video>
-    </div>
-
+    <a id="videoLink" target="_blank" style="cursor: zoom-in; display: block; width: 100%; height: 100%;">
+        <div class="video-container">
+            <video id="videoPlayer" autoplay muted loop playsinline></video>
+        </div>
+    </a>
+    
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const publicId = urlParams.get('id');
-        const cloudName = "dzrmwmjft"; // Cloudinary 클라우드 네임
-
+        const cloudName = "dzrmwmjft";
+    
         if (publicId) {
-            // q_auto: 화질 자동, f_auto: 포맷 자동, w_1280: 가로 1280px로 제한 (로딩 속도 대폭 향상)
+            // q_auto, f_auto 최적화 주소 (임베드용)
             const videoUrl = `https://res.cloudinary.com/${cloudName}/video/upload/f_auto,q_auto,w_800/v1/${publicId}.mp4`;
             document.getElementById('videoPlayer').src = videoUrl;
+            
+            // 클릭 시 열릴 원본 주소 (최고 화질)
+            document.getElementById('videoLink').href = `https://res.cloudinary.com/${cloudName}/video/upload/v1/${publicId}.mp4`;
         }
     </script>
 </body>
