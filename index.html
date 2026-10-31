@@ -32,9 +32,9 @@
             // 1. 임베드용: fl_progressive 추가 (안정성 강화)
             const embedUrl = `https://res.cloudinary.com/${cloudName}/video/upload/ac_none,f_auto,q_auto,w_800,fl_progressive/v1/${publicId}.mp4`;
             
-            // 2. 새 창 감상용: 변환 완료 후 전달해 길이 정보와 구간 탐색을 지원합니다.
+            // 2. 새 창 감상용: 기존 즉시 재생 주소를 사용합니다.
             // 미리보기의 자동·무음·반복 재생 설정과 주소는 유지합니다.
-            const originalUrl = `https://res.cloudinary.com/${cloudName}/video/upload/ac_none,f_auto,q_auto,fl_no_stream/v1/${publicId}.mp4`;
+            const originalUrl = `https://res.cloudinary.com/${cloudName}/video/upload/ac_none,f_auto,q_auto,fl_progressive/v1/${publicId}.mp4`;
 
             player.src = embedUrl;
 
