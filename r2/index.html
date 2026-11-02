@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>R2 Video Player</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #000; color: #fff; font-family: system-ui, sans-serif; }
+    body { display: flex; align-items: center; justify-content: center; }
+    .player { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+    .video-link { display: block; width: 100%; height: 100%; cursor: zoom-in; }
+    .video-link:focus-visible { outline: 3px solid #fff; outline-offset: -3px; }
+    video { display: block; width: 100%; height: 100%; object-fit: contain; background: #000; }
+    .overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 20px; text-align: center; background: rgb(0 0 0 / 65%); }
+    [hidden] { display: none !important; }
+    button, .fallback { color: #fff; background: #222; border: 1px solid #aaa; border-radius: 6px; padding: 10px 16px; font: inherit; cursor: pointer; }
+    .fallback { text-decoration: none; }
+    p { margin: 0; }
+  </style>
+</head>
+<body>
+  <main class="player" aria-label="동영상 플레이어">
+    <a id="original" class="video-link" target="_blank" rel="noopener noreferrer" aria-label="원본 동영상 새 창에서 열기" hidden>
+      <video id="video" autoplay muted loop playsinline preload="auto" aria-label="동영상 미리보기"></video>
+    </a>
+    <div id="overlay" class="overlay" hidden>
+      <p id="message" role="status" aria-live="polite"></p>
+      <button id="play" type="button" hidden>동영상 재생</button>
+      <a id="fallback" class="fallback" target="_blank" rel="noopener noreferrer" hidden>원본 동영상 열기</a>
+    </div>
+  </main>
+  <noscript>동영상을 보려면 JavaScript를 활성화해 주세요.</noscript>
+  <script>
+    (() => {
+      // 도메인 이전 시 이 주소만 변경합니다. 파일명과 폴더 경로는 유지하세요.
+      const R2_BASE_URL = 'https://pub-88dcfec232c445bc8dfe26b5d5e8fa5d.r2.dev/';
+      const video = document.getElementById('video');
+      const original = document.getElementById('original');
+      const overlay = document.getElementById('overlay');
+      const message = document.getElementById('message');
+      const play = document.getElementById('play');
+      const fallback = document.getElementById('fallback');
+
+      const showMessage = (text, canPlay = false) => {
+        message.textContent = text;
+        play.hidden = !canPlay;
+        overlay.hidden = false;
+      };
+
+      const file = new URLSearchParams(window.location.search).get('file');
+      const segments = file ? file.split('/') : [];
+      // 이 버킷의 MP4 상대 경로만 허용합니다.
+      if (!file || segments.some(part => !part || part === '.' || part === '..') ||
+          /[\\\x00-\x1f\x7f]/.test(file) || !/\.mp4$/i.test(file)) {
+        showMessage('올바른 MP4 파일명을 지정해 주세요.');
+        return;
+      }
+
+      const source = new URL(segments.map(encodeURIComponent).join('/'), R2_BASE_URL).href;
+      original.href = source;
+      original.hidden = false;
+      fallback.href = source;
+      fallback.hidden = false;
+
+      video.addEventListener('playing', () => { overlay.hidden = true; });
+      video.addEventListener('error', () => {
+        showMessage('동영상을 불러오지 못했습니다. 원본 링크로 확인해 주세요.');
+      });
+
+      const startPlayback = () => {
+        video.play().catch(() => {
+          if (!video.error) showMessage('재생 버튼을 눌러 동영상을 시작해 주세요.', true);
+        });
+      };
+      play.addEventListener('click', startPlayback);
+      video.muted = true;
+      video.src = source;
+      startPlayback();
+    })();
+  </script>
+</body>
+</html>
